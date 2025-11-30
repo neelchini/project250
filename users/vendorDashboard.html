@@ -43,6 +43,9 @@
     .vendor-details { flex:1; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 16px; }
     .vendor-actions { display:flex; gap:8px; }
     #mapContainer { width:100%; height:400px; border-radius:12px; margin:12px 0; border:1px solid #e5e7eb; }
+    .whatsapp-available { color: #25D366; font-weight: 600; }
+    .service-radius { background: #e0f2fe; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
+    .visiting-card-preview { max-width: 200px; border: 1px solid #e5e7eb; border-radius: 8px; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -81,6 +84,10 @@
           <p><strong>Location:</strong> <span id="companyLocation">—</span></p>
           <p><strong>Email:</strong> <span id="companyEmail">—</span></p>
           <p><strong>Job Type:</strong> <span id="companyJobType">—</span></p>
+          <p><strong>Service Radius:</strong> <span id="companyServiceRadius">—</span> km</p>
+          <p><strong>WhatsApp:</strong> <span id="companyWhatsapp">—</span></p>
+          <p><strong>Shop Address:</strong> <span id="companyShopAddress">—</span></p>
+          <p><strong>Service Areas:</strong> <span id="companyServiceAreas">—</span></p>
           <p><strong>Job Description:</strong> <span id="companyJobDesc">—</span></p>
         </div>
         <div class="vendor-actions">
@@ -260,6 +267,27 @@
             <option>Other</option>
           </select>
         </label>
+        <label class="form-field">
+          <span>WhatsApp Message Link</span>
+          <input id="editWhatsappLink" type="url" placeholder="https://wa.me/..." />
+        </label>
+        <label class="form-field">
+          <span>Service Radius (km)</span>
+          <input id="editServiceRadius" type="number" min="1" max="100" placeholder="e.g., 5" />
+        </label>
+        <label class="form-field">
+          <span>Visiting Card URL</span>
+          <input id="editVisitingCard" type="url" placeholder="https://..." />
+        </label>
+        <label class="form-field col-span-2">
+          <span>Shop/Office Address</span>
+          <textarea id="editShopAddress" rows="2" placeholder="Full shop or office address..."></textarea>
+        </label>
+        <label class="form-field col-span-2">
+          <span>Service Areas</span>
+          <textarea id="editServiceLocations" rows="2" placeholder="Enter areas you serve, separated by commas (e.g., Gulshan, Banani, Dhanmondi)"></textarea>
+          <small class="muted">Separate multiple locations with commas</small>
+        </label>
         <label class="form-field col-span-2">
           <span>Vendor Description</span>
           <textarea id="editJobDescription" rows="3" placeholder="Short description about your services/skills"></textarea>
@@ -351,13 +379,24 @@ async function loadVendorProfile() {
     document.getElementById("companyLocation").textContent = me.location || "—";
     document.getElementById("companyEmail").textContent = me.email || "—";
     document.getElementById("companyJobType").textContent = (me.job_type || "—").replace(/_/g, " ");
+    document.getElementById("companyServiceRadius").textContent = me.service_radius_km || "—";
+    document.getElementById("companyWhatsapp").textContent = me.whatsapp_link ? "Available" : "—";
+    document.getElementById("companyShopAddress").textContent = me.shop_address || "—";
+    document.getElementById("companyServiceAreas").textContent = 
+      me.service_locations ? me.service_locations.join(", ") : "—";
     document.getElementById("companyJobDesc").textContent = me.Vendor_description || "—";
+
+    // Update logo if available
+    if (me.logo_url) {
+      document.getElementById("companyLogoBox").innerHTML = `<img src="${me.logo_url}" alt="Logo" />`;
+    }
 
     if (me.latitude && me.longitude) {
       currentLat = parseFloat(me.latitude);
       currentLng = parseFloat(me.longitude);
     }
 
+    // Populate edit form
     document.getElementById("editCompanyName").value = me.company_name || "";
     document.getElementById("editCompanyPhone").value = me.phone || "";
     document.getElementById("editCompanyLocation").value = me.location || "";
@@ -365,6 +404,14 @@ async function loadVendorProfile() {
     document.getElementById("editJobType").value = me.job_type || "";
     document.getElementById("editJobDescription").value = me.Vendor_description || "";
     document.getElementById("editLogoUrl").value = me.logo_url || "";
+    
+    // New fields
+    document.getElementById("editWhatsappLink").value = me.whatsapp_link || "";
+    document.getElementById("editServiceRadius").value = me.service_radius_km || 5;
+    document.getElementById("editVisitingCard").value = me.visiting_card_url || "";
+    document.getElementById("editShopAddress").value = me.shop_address || "";
+    document.getElementById("editServiceLocations").value = 
+      me.service_locations ? me.service_locations.join(", ") : "";
 
     initMap();
     if (me.latitude && me.longitude) {
@@ -619,6 +666,11 @@ document.getElementById("closeEditBtn").addEventListener("click", () => {
 
 document.getElementById("saveEditBtn").addEventListener("click", async () => {
   try {
+    const serviceLocationsText = document.getElementById("editServiceLocations").value.trim();
+    const serviceLocations = serviceLocationsText ? 
+      serviceLocationsText.split(',').map(loc => loc.trim()).filter(loc => loc) : 
+      [];
+
     const data = {
       company_name: document.getElementById("editCompanyName").value.trim(),
       phone: document.getElementById("editCompanyPhone").value.trim(),
@@ -627,6 +679,11 @@ document.getElementById("saveEditBtn").addEventListener("click", async () => {
       job_type: document.getElementById("editJobType").value.trim(),
       Vendor_description: document.getElementById("editJobDescription").value.trim(),
       logo_url: document.getElementById("editLogoUrl").value.trim() || null,
+      whatsapp_link: document.getElementById("editWhatsappLink").value.trim() || null,
+      service_radius_km: parseInt(document.getElementById("editServiceRadius").value) || 5,
+      visiting_card_url: document.getElementById("editVisitingCard").value.trim() || null,
+      shop_address: document.getElementById("editShopAddress").value.trim() || null,
+      service_locations: serviceLocations.length > 0 ? serviceLocations : null
     };
 
     if (!data.company_name || !data.phone || !data.location || !data.email || !data.job_type) {
@@ -661,6 +718,12 @@ document.getElementById("resetEditBtn").addEventListener("click", () => {
     document.getElementById("editJobType").value = VENDOR_PROFILE.job_type || "";
     document.getElementById("editJobDescription").value = VENDOR_PROFILE.Vendor_description || "";
     document.getElementById("editLogoUrl").value = VENDOR_PROFILE.logo_url || "";
+    document.getElementById("editWhatsappLink").value = VENDOR_PROFILE.whatsapp_link || "";
+    document.getElementById("editServiceRadius").value = VENDOR_PROFILE.service_radius_km || 5;
+    document.getElementById("editVisitingCard").value = VENDOR_PROFILE.visiting_card_url || "";
+    document.getElementById("editShopAddress").value = VENDOR_PROFILE.shop_address || "";
+    document.getElementById("editServiceLocations").value = 
+      VENDOR_PROFILE.service_locations ? VENDOR_PROFILE.service_locations.join(", ") : "";
   }
 });
 
