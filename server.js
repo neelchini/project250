@@ -23,7 +23,12 @@ import servicesRouter from "./routes/services.js";
 import { requireCustomerJWT } from "./middleware/auth.js";
 import requireVendor from "./middleware/requireVendor.js";
 import customersRouter from "./routes/customer.js";
+// At top of server.js
+import { OpenAI } from "openai";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // === NEW: recommendation + rating routers ===
 // --------------------------------------------
