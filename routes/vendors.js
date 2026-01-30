@@ -40,7 +40,12 @@ router.get("/me", async (req, res) => {
          vendor_type,
          rating,
          job_type,
-         Vendor_description
+         Vendor_description,
+         whatsapp_link,
+         service_radius_km,
+         visiting_card_url,
+         shop_address,
+         service_locations
        FROM Vendors
        WHERE vendor_id = ?
        LIMIT 1`,
@@ -51,7 +56,17 @@ router.get("/me", async (req, res) => {
       return res.status(404).json({ ok: false, error: "Vendor not found" });
     }
 
-    return res.json({ ok: true, data: rows[0] });
+    // Parse JSON fields
+    const vendorData = rows[0];
+    if (vendorData.service_locations) {
+      try {
+        vendorData.service_locations = JSON.parse(vendorData.service_locations);
+      } catch (e) {
+        vendorData.service_locations = [];
+      }
+    }
+
+    return res.json({ ok: true, data: vendorData });
   } catch (e) {
     console.error("GET /me error:", e);
     return res.status(500).json({ ok: false, error: e.message });
@@ -60,7 +75,7 @@ router.get("/me", async (req, res) => {
 
 /**
  * PATCH /api/vendors/me
- * Update vendor profile
+ * Update vendor profile with new fields
  */
 router.patch("/me", async (req, res) => {
   try {
@@ -79,6 +94,11 @@ router.patch("/me", async (req, res) => {
       Vendor_description,
       latitude,
       longitude,
+      whatsapp_link,
+      service_radius_km,
+      visiting_card_url,
+      shop_address,
+      service_locations
     } = req.body || {};
 
     if (!company_name || !phone || !location || !email) {
@@ -95,6 +115,11 @@ router.patch("/me", async (req, res) => {
       Vendor_description: Vendor_description || null,
       latitude: latitude !== undefined ? parseFloat(latitude) : null,
       longitude: longitude !== undefined ? parseFloat(longitude) : null,
+      whatsapp_link: whatsapp_link || null,
+      service_radius_km: service_radius_km ? parseInt(service_radius_km) : 5,
+      visiting_card_url: visiting_card_url || null,
+      shop_address: shop_address || null,
+      service_locations: service_locations ? JSON.stringify(service_locations) : null
     };
 
     const { setClause, values } = buildUpdateSet(updateCols);
@@ -111,6 +136,7 @@ router.patch("/me", async (req, res) => {
       return res.status(404).json({ ok: false, error: "Vendor not found" });
     }
 
+    // Return updated vendor data
     const [rows] = await db.query(
       `SELECT 
          vendor_id,
@@ -124,14 +150,29 @@ router.patch("/me", async (req, res) => {
          vendor_type,
          rating,
          job_type,
-         Vendor_description
+         Vendor_description,
+         whatsapp_link,
+         service_radius_km,
+         visiting_card_url,
+         shop_address,
+         service_locations
        FROM Vendors
        WHERE vendor_id = ?
        LIMIT 1`,
       [vendor_id]
     );
 
-    return res.json({ ok: true, data: rows[0] });
+    // Parse JSON fields
+    const vendorData = rows[0];
+    if (vendorData.service_locations) {
+      try {
+        vendorData.service_locations = JSON.parse(vendorData.service_locations);
+      } catch (e) {
+        vendorData.service_locations = [];
+      }
+    }
+
+    return res.json({ ok: true, data: vendorData });
   } catch (e) {
     console.error("PATCH /me error:", e);
     return res.status(500).json({ ok: false, error: e.message });
@@ -253,14 +294,29 @@ router.patch("/me/location", async (req, res) => {
          vendor_type,
          rating,
          job_type,
-         Vendor_description
+         Vendor_description,
+         whatsapp_link,
+         service_radius_km,
+         visiting_card_url,
+         shop_address,
+         service_locations
        FROM Vendors
        WHERE vendor_id = ?
        LIMIT 1`,
       [vendor_id]
     );
 
-    return res.json({ ok: true, data: rows[0] });
+    // Parse JSON fields
+    const vendorData = rows[0];
+    if (vendorData.service_locations) {
+      try {
+        vendorData.service_locations = JSON.parse(vendorData.service_locations);
+      } catch (e) {
+        vendorData.service_locations = [];
+      }
+    }
+
+    return res.json({ ok: true, data: vendorData });
   } catch (e) {
     console.error("PATCH /me/location error:", e);
     return res.status(500).json({ ok: false, error: e.message });

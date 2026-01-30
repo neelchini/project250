@@ -10,244 +10,40 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <style>
-    .hidden {
-      display: none !important;
-    }
-
-    .muted {
-      color: #6b7280;
-    }
-
-    .row-actions {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .status {
-      font-size: 0.9rem;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
-    }
-
-    .product-card {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 10px;
-      overflow: hidden;
-    }
-
-    .product-card img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-
-    .card {
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 16px;
-      background: #fff;
-      margin-bottom: 16px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-field.col-span-2 {
-      grid-column: span 2 / span 2;
-    }
-
-    .btn {
-      padding: 8px 14px;
-      border-radius: 10px;
-      border: 1px solid #11182710;
-      cursor: pointer;
-      background: #f3f4f6;
-    }
-
-    .btn.primary {
-      background: #111827;
-      color: #fff;
-    }
-
-    .type-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin: 12px 0;
-    }
-
-    .type-card {
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 12px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      cursor: pointer;
-    }
-
-    .type-card input {
-      margin-top: 4px;
-    }
-
-    .gated {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s ease;
-    }
-
-    .gated.ready {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .dialog-backdrop {
-      position: fixed;
-      inset: 0;
-      background: #0006;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-      overflow-y: auto;
-    }
-
-    .dialog {
-      width: 100%;
-      max-width: 560px;
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 10px 30px #0003;
-      padding: 16px;
-    }
-
-    .dialog header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .dialog footer {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      margin-top: 12px;
-    }
-
-    .vendor-logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #111827;
-      color: #fff;
-      font-weight: 600;
-      font-size: 20px;
-      overflow: hidden;
-    }
-
-    .vendor-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 16px;
-      border-bottom: 1px solid #e5e7eb;
-      background: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    .dashboard-container {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      min-height: calc(100vh - 56px);
-    }
-
-    .sidebar {
-      border-right: 1px solid #e5e7eb;
-      padding: 16px;
-    }
-
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sidebar li {
-      padding: 8px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .sidebar li.active,
-    .sidebar li:hover {
-      background: #f3f4f6;
-    }
-
-    .vendor-info {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .vendor-details {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px 16px;
-    }
-
-    .vendor-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    #mapContainer {
-      width: 100%;
-      height: 400px;
-      border-radius: 12px;
-      margin: 12px 0;
-      border: 1px solid #e5e7eb;
-    }
+    .hidden { display: none !important; }
+    .muted { color: #6b7280; }
+    .row-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .status { font-size: 0.9rem; }
+    .products-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap:16px; }
+    .product-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; overflow: hidden; }
+    .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; }
+    .card { border:1px solid #e5e7eb; border-radius:16px; padding:16px; background:#fff; margin-bottom:16px; }
+    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; }
+    .form-field { display:flex; flex-direction:column; gap:6px; }
+    .form-field.col-span-2 { grid-column: span 2 / span 2; }
+    .btn { padding:8px 14px; border-radius:10px; border:1px solid #11182710; cursor:pointer; background:#f3f4f6; }
+    .btn.primary { background:#111827; color:#fff; }
+    .type-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin:12px 0; }
+    .type-card { border:1px solid #e5e7eb; border-radius:14px; padding:12px; display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
+    .type-card input { margin-top:4px; }
+    .gated { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .gated.ready { opacity: 1; pointer-events: auto; }
+    .dialog-backdrop { position: fixed; inset: 0; background: #0006; display:none; align-items:center; justify-content:center; padding: 20px; z-index:1000; overflow-y:auto; }
+    .dialog { width: 100%; max-width: 560px; background:#fff; border-radius:16px; border:1px solid #e5e7eb; box-shadow: 0 10px 30px #0003; padding: 16px; }
+    .dialog header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px; }
+    .dialog footer { display:flex; gap:8px; justify-content:flex-end; margin-top: 12px; }
+    .vendor-logo { width: 56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#111827; color:#fff; font-weight:600; font-size:20px; overflow:hidden; }
+    .vendor-logo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; background:#fff; position: sticky; top:0; z-index:5; }
+    .dashboard-container { display:grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 56px); }
+    .sidebar { border-right:1px solid #e5e7eb; padding: 16px; }
+    .sidebar ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+    .sidebar li { padding:8px 10px; border-radius:8px; cursor:pointer; }
+    .sidebar li.active, .sidebar li:hover { background:#f3f4f6; }
+    .vendor-info { display:flex; gap:16px; align-items:center; justify-content:space-between; border:1px solid #e5e7eb; border-radius:16px; padding:16px; margin-bottom:16px; }
+    .vendor-details { flex:1; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 16px; }
+    .vendor-actions { display:flex; gap:8px; }
+    #mapContainer { width:100%; height:400px; border-radius:12px; margin:12px 0; border:1px solid #e5e7eb; }
   </style>
 </head>
 
@@ -287,6 +83,10 @@
           <p><strong>Location:</strong> <span id="companyLocation">—</span></p>
           <p><strong>Email:</strong> <span id="companyEmail">—</span></p>
           <p><strong>Job Type:</strong> <span id="companyJobType">—</span></p>
+          <p><strong>Service Radius:</strong> <span id="companyServiceRadius">—</span> km</p>
+          <p><strong>WhatsApp:</strong> <span id="companyWhatsapp">—</span></p>
+          <p><strong>Shop Address:</strong> <span id="companyShopAddress">—</span></p>
+          <p><strong>Service Areas:</strong> <span id="companyServiceAreas">—</span></p>
           <p><strong>Job Description:</strong> <span id="companyJobDesc">—</span></p>
         </div>
         <div class="vendor-actions">
@@ -466,6 +266,27 @@
             <option>Other</option>
           </select>
         </label>
+        <label class="form-field">
+          <span>WhatsApp Message Link</span>
+          <input id="editWhatsappLink" type="url" placeholder="https://wa.me/..." />
+        </label>
+        <label class="form-field">
+          <span>Service Radius (km)</span>
+          <input id="editServiceRadius" type="number" min="1" max="100" placeholder="e.g., 5" />
+        </label>
+        <label class="form-field">
+          <span>Visiting Card URL</span>
+          <input id="editVisitingCard" type="url" placeholder="https://..." />
+        </label>
+        <label class="form-field col-span-2">
+          <span>Shop/Office Address</span>
+          <textarea id="editShopAddress" rows="2" placeholder="Full shop or office address..."></textarea>
+        </label>
+        <label class="form-field col-span-2">
+          <span>Service Areas</span>
+          <textarea id="editServiceLocations" rows="2" placeholder="Enter areas you serve, separated by commas (e.g., Gulshan, Banani, Dhanmondi)"></textarea>
+          <small class="muted">Separate multiple locations with commas</small>
+        </label>
         <label class="form-field col-span-2">
           <span>Vendor Description</span>
           <textarea id="editJobDescription" rows="3"
@@ -569,25 +390,25 @@
       const me = await apiCall("/api/vendors/me");
       VENDOR_PROFILE = me;
 
-      document.getElementById("companyName").textContent = me.company_name || "—";
-      document.getElementById("companyPhone").textContent = me.phone || "—";
-      document.getElementById("companyLocation").textContent = me.location || "—";
-      document.getElementById("companyEmail").textContent = me.email || "—";
-      document.getElementById("companyJobType").textContent = me.job_type || "—";
-      document.getElementById("companyJobDesc").textContent = me.Vendor_description || "—";
+    document.getElementById("companyName").textContent = me.company_name || "—";
+    document.getElementById("companyPhone").textContent = me.phone || "—";
+    document.getElementById("companyLocation").textContent = me.location || "—";
+    document.getElementById("companyEmail").textContent = me.email || "—";
+    document.getElementById("companyJobType").textContent = (me.job_type || "—").replace(/_/g, " ");
+    document.getElementById("companyJobDesc").textContent = me.Vendor_description || "—";
 
-      document.getElementById("editCompanyName").value = me.company_name || "";
-      document.getElementById("editCompanyPhone").value = me.phone || "";
-      document.getElementById("editCompanyLocation").value = me.location || "";
-      document.getElementById("editCompanyEmail").value = me.email || "";
-      document.getElementById("editJobType").value = me.job_type || "";
-      document.getElementById("editJobDescription").value = me.Vendor_description || "";
-      document.getElementById("editLogoUrl").value = me.logo_url || "";
+    if (me.latitude && me.longitude) {
+      currentLat = parseFloat(me.latitude);
+      currentLng = parseFloat(me.longitude);
+    }
 
-      if (me.latitude && me.longitude) {
-        currentLat = parseFloat(me.latitude);
-        currentLng = parseFloat(me.longitude);
-      }
+    document.getElementById("editCompanyName").value = me.company_name || "";
+    document.getElementById("editCompanyPhone").value = me.phone || "";
+    document.getElementById("editCompanyLocation").value = me.location || "";
+    document.getElementById("editCompanyEmail").value = me.email || "";
+    document.getElementById("editJobType").value = me.job_type || "";
+    document.getElementById("editJobDescription").value = me.Vendor_description || "";
+    document.getElementById("editLogoUrl").value = me.logo_url || "";
 
       initMap();
       vendorMarker.setLatLng([currentLat, currentLng]);
@@ -638,17 +459,17 @@
       document.getElementById("editDialog").style.display = "none";
     });
 
-    document.getElementById("saveEditBtn").addEventListener("click", async () => {
-      try {
-        const data = {
-          company_name: document.getElementById("editCompanyName").value.trim(),
-          phone: document.getElementById("editCompanyPhone").value.trim(),
-          location: document.getElementById("editCompanyLocation").value.trim(),
-          email: document.getElementById("editCompanyEmail").value.trim(),
-          job_type: document.getElementById("editJobType").value,
-          Vendor_description: document.getElementById("editJobDescription").value.trim(),
-          logo_url: document.getElementById("editLogoUrl").value.trim() || null
-        };
+document.getElementById("saveEditBtn").addEventListener("click", async () => {
+  try {
+    const data = {
+      company_name: document.getElementById("editCompanyName").value.trim(),
+      phone: document.getElementById("editCompanyPhone").value.trim(),
+      location: document.getElementById("editCompanyLocation").value.trim(),
+      email: document.getElementById("editCompanyEmail").value.trim(),
+      job_type: document.getElementById("editJobType").value.trim(),
+      Vendor_description: document.getElementById("editJobDescription").value.trim(),
+      logo_url: document.getElementById("editLogoUrl").value.trim() || null,
+    };
 
         if (!data.company_name || !data.phone || !data.location || !data.email || !data.job_type) {
           throw new Error("All required fields must be filled");
@@ -673,16 +494,17 @@
       }
     });
 
-    document.getElementById("resetEditBtn").addEventListener("click", () => {
-      if (!VENDOR_PROFILE) return;
-      document.getElementById("editCompanyName").value = VENDOR_PROFILE.company_name || "";
-      document.getElementById("editCompanyPhone").value = VENDOR_PROFILE.phone || "";
-      document.getElementById("editCompanyLocation").value = VENDOR_PROFILE.location || "";
-      document.getElementById("editCompanyEmail").value = VENDOR_PROFILE.email || "";
-      document.getElementById("editJobType").value = VENDOR_PROFILE.job_type || "";
-      document.getElementById("editJobDescription").value = VENDOR_PROFILE.Vendor_description || "";
-      document.getElementById("editLogoUrl").value = VENDOR_PROFILE.logo_url || "";
-    });
+document.getElementById("resetEditBtn").addEventListener("click", () => {
+  if (VENDOR_PROFILE) {
+    document.getElementById("editCompanyName").value = VENDOR_PROFILE.company_name || "";
+    document.getElementById("editCompanyPhone").value = VENDOR_PROFILE.phone || "";
+    document.getElementById("editCompanyLocation").value = VENDOR_PROFILE.location || "";
+    document.getElementById("editCompanyEmail").value = VENDOR_PROFILE.email || "";
+    document.getElementById("editJobType").value = VENDOR_PROFILE.job_type || "";
+    document.getElementById("editJobDescription").value = VENDOR_PROFILE.Vendor_description || "";
+    document.getElementById("editLogoUrl").value = VENDOR_PROFILE.logo_url || "";
+  }
+});
 
     /* =======================
        LOGOUT
