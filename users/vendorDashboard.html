@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,42 +10,247 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <style>
-    .hidden { display: none !important; }
-    .muted { color: #6b7280; }
-    .row-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    .status { font-size: 0.9rem; }
-    .products-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap:16px; }
-    .product-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; overflow: hidden; }
-    .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; }
-    .card { border:1px solid #e5e7eb; border-radius:16px; padding:16px; background:#fff; margin-bottom:16px; }
-    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; }
-    .form-field { display:flex; flex-direction:column; gap:6px; }
-    .form-field.col-span-2 { grid-column: span 2 / span 2; }
-    .btn { padding:8px 14px; border-radius:10px; border:1px solid #11182710; cursor:pointer; background:#f3f4f6; }
-    .btn.primary { background:#111827; color:#fff; }
-    .type-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin:12px 0; }
-    .type-card { border:1px solid #e5e7eb; border-radius:14px; padding:12px; display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
-    .type-card input { margin-top:4px; }
-    .gated { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
-    .gated.ready { opacity: 1; pointer-events: auto; }
-    .dialog-backdrop { position: fixed; inset: 0; background: #0006; display:none; align-items:center; justify-content:center; padding: 20px; z-index:1000; overflow-y:auto; }
-    .dialog { width: 100%; max-width: 560px; background:#fff; border-radius:16px; border:1px solid #e5e7eb; box-shadow: 0 10px 30px #0003; padding: 16px; }
-    .dialog header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px; }
-    .dialog footer { display:flex; gap:8px; justify-content:flex-end; margin-top: 12px; }
-    .vendor-logo { width: 56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#111827; color:#fff; font-weight:600; font-size:20px; overflow:hidden; }
-    .vendor-logo img { width:100%; height:100%; object-fit:cover; display:block; }
-    .topbar { display:flex; align-items:center; justify-content:space-between; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; background:#fff; position: sticky; top:0; z-index:5; }
-    .dashboard-container { display:grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 56px); }
-    .sidebar { border-right:1px solid #e5e7eb; padding: 16px; }
-    .sidebar ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
-    .sidebar li { padding:8px 10px; border-radius:8px; cursor:pointer; }
-    .sidebar li.active, .sidebar li:hover { background:#f3f4f6; }
-    .vendor-info { display:flex; gap:16px; align-items:center; justify-content:space-between; border:1px solid #e5e7eb; border-radius:16px; padding:16px; margin-bottom:16px; }
-    .vendor-details { flex:1; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 16px; }
-    .vendor-actions { display:flex; gap:8px; }
-    #mapContainer { width:100%; height:400px; border-radius:12px; margin:12px 0; border:1px solid #e5e7eb; }
+    .hidden {
+      display: none !important;
+    }
+
+    .muted {
+      color: #6b7280;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      font-size: 0.9rem;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+      background: #fff;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field.col-span-2 {
+      grid-column: span 2 / span 2;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid #11182710;
+      cursor: pointer;
+      background: #f3f4f6;
+    }
+
+    .btn.primary {
+      background: #111827;
+      color: #fff;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .type-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    .type-card input {
+      margin-top: 4px;
+    }
+
+    .gated {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    .gated.ready {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      background: #0006;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .dialog {
+      width: 100%;
+      max-width: 560px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 10px 30px #0003;
+      padding: 16px;
+    }
+
+    .dialog header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .dialog footer {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .vendor-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111827;
+      color: #fff;
+      font-weight: 600;
+      font-size: 20px;
+      overflow: hidden;
+    }
+
+    .vendor-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+
+    .sidebar {
+      border-right: 1px solid #e5e7eb;
+      padding: 16px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar li {
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .sidebar li.active,
+    .sidebar li:hover {
+      background: #f3f4f6;
+    }
+
+    .vendor-info {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .vendor-details {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 16px;
+    }
+
+    .vendor-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    #mapContainer {
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+      margin: 12px 0;
+      border: 1px solid #e5e7eb;
+    }
   </style>
 </head>
+
 <body>
   <header class="topbar">
     <div class="logo">
@@ -262,7 +468,8 @@
         </label>
         <label class="form-field col-span-2">
           <span>Vendor Description</span>
-          <textarea id="editJobDescription" rows="3" placeholder="Short description about your services/skills"></textarea>
+          <textarea id="editJobDescription" rows="3"
+            placeholder="Short description about your services/skills"></textarea>
         </label>
         <label class="form-field col-span-2">
           <span>Logo URL (optional)</span>
@@ -278,403 +485,220 @@
   </div>
 
   <script>
-const API_BASE = "http://localhost:5555";
-const VENDOR_TOKEN = localStorage.getItem("vendorToken");
-const VENDOR_ID = Number(localStorage.getItem("vendorId"));
+    /* =======================
+       AUTH & GLOBALS
+    ======================= */
+    const API_BASE = "http://localhost:5555";
+    const VENDOR_TOKEN = localStorage.getItem("vendorToken");
+    const VENDOR_ID = Number(localStorage.getItem("vendorId"));
 
-console.log("🔐 Vendor Auth:", { VENDOR_ID, tokenExists: !!VENDOR_TOKEN });
-
-if (!VENDOR_ID || !VENDOR_TOKEN) {
-  alert("❌ Not authenticated");
-  window.location.href = "../index.html";
-}
-
-let map = null;
-let vendorMarker = null;
-let currentLat = 23.8103;
-let currentLng = 90.4125;
-let VENDOR_PROFILE = null;
-
-// ===== API CALL WITH PROPER AUTH =====
-async function apiCall(path, method = "GET", body = null) {
-  const options = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${VENDOR_TOKEN}`
-    }
-  };
-  
-  if (body) options.body = JSON.stringify(body);
-  
-  const res = await fetch(`${API_BASE}${path}`, options);
-  const contentType = res.headers.get("content-type");
-  if (contentType?.includes("text/html")) throw new Error(`HTML response: ${res.status}`);
-  
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
-  return json.data || json;
-}
-
-// ===== MAP INITIALIZATION =====
-function initMap() {
-  if (map) return;
-  const container = document.getElementById("mapContainer");
-  if (!container) return;
-  
-  map = L.map("mapContainer").setView([currentLat, currentLng], 13);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors",
-    maxZoom: 19,
-  }).addTo(map);
-
-  vendorMarker = L.marker([currentLat, currentLng]).addTo(map).bindPopup("Your Business Location");
-
-  map.on("click", (e) => {
-    currentLat = e.latlng.lat;
-    currentLng = e.latlng.lng;
-    vendorMarker.setLatLng([currentLat, currentLng]);
-    document.getElementById("locationName").value = `${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
-  });
-
-  setTimeout(() => map.invalidateSize(), 100);
-}
-
-// ===== LOAD PROFILE =====
-async function loadVendorProfile() {
-  try {
-    const me = await apiCall("/api/vendors/me");
-    VENDOR_PROFILE = me;
-
-    document.getElementById("companyName").textContent = me.company_name || "—";
-    document.getElementById("companyPhone").textContent = me.phone || "—";
-    document.getElementById("companyLocation").textContent = me.location || "—";
-    document.getElementById("companyEmail").textContent = me.email || "—";
-    document.getElementById("companyJobType").textContent = (me.job_type || "—").replace(/_/g, " ");
-    document.getElementById("companyJobDesc").textContent = me.Vendor_description || "—";
-
-    if (me.latitude && me.longitude) {
-      currentLat = parseFloat(me.latitude);
-      currentLng = parseFloat(me.longitude);
+    if (!VENDOR_ID || !VENDOR_TOKEN) {
+      alert("❌ Not authenticated");
+      window.location.href = "../index.html";
     }
 
-    document.getElementById("editCompanyName").value = me.company_name || "";
-    document.getElementById("editCompanyPhone").value = me.phone || "";
-    document.getElementById("editCompanyLocation").value = me.location || "";
-    document.getElementById("editCompanyEmail").value = me.email || "";
-    document.getElementById("editJobType").value = me.job_type || "";
-    document.getElementById("editJobDescription").value = me.Vendor_description || "";
-    document.getElementById("editLogoUrl").value = me.logo_url || "";
+    let map = null;
+    let vendorMarker = null;
+    let currentLat = 23.8103;
+    let currentLng = 90.4125;
+    let VENDOR_PROFILE = null;
 
-    initMap();
-    if (me.latitude && me.longitude) {
-      map.setView([currentLat, currentLng], 13);
+    /* =======================
+       API HELPER
+    ======================= */
+    async function apiCall(path, method = "GET", body = null) {
+      const res = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${VENDOR_TOKEN}`
+        },
+        body: body ? JSON.stringify(body) : null
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Request failed");
+      return json.data || json;
+    }
+
+    /* =======================
+       REVERSE GEOCODING
+    ======================= */
+    async function getLocationName(lat, lng) {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        );
+        const data = await res.json();
+        return data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      } catch {
+        return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      }
+    }
+
+    /* =======================
+       MAP
+    ======================= */
+    function initMap() {
+      if (map) return;
+
+      map = L.map("mapContainer").setView([currentLat, currentLng], 13);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19
+      }).addTo(map);
+
+      vendorMarker = L.marker([currentLat, currentLng]).addTo(map);
+
+      map.on("click", async (e) => {
+        currentLat = e.latlng.lat;
+        currentLng = e.latlng.lng;
+        vendorMarker.setLatLng([currentLat, currentLng]);
+
+        const place = await getLocationName(currentLat, currentLng);
+        document.getElementById("locationName").value = place;
+      });
+
+      setTimeout(() => map.invalidateSize(), 100);
+    }
+
+    /* =======================
+       LOAD PROFILE
+    ======================= */
+    async function loadVendorProfile() {
+      const me = await apiCall("/api/vendors/me");
+      VENDOR_PROFILE = me;
+
+      document.getElementById("companyName").textContent = me.company_name || "—";
+      document.getElementById("companyPhone").textContent = me.phone || "—";
+      document.getElementById("companyLocation").textContent = me.location || "—";
+      document.getElementById("companyEmail").textContent = me.email || "—";
+      document.getElementById("companyJobType").textContent = me.job_type || "—";
+      document.getElementById("companyJobDesc").textContent = me.Vendor_description || "—";
+
+      document.getElementById("editCompanyName").value = me.company_name || "";
+      document.getElementById("editCompanyPhone").value = me.phone || "";
+      document.getElementById("editCompanyLocation").value = me.location || "";
+      document.getElementById("editCompanyEmail").value = me.email || "";
+      document.getElementById("editJobType").value = me.job_type || "";
+      document.getElementById("editJobDescription").value = me.Vendor_description || "";
+      document.getElementById("editLogoUrl").value = me.logo_url || "";
+
+      if (me.latitude && me.longitude) {
+        currentLat = parseFloat(me.latitude);
+        currentLng = parseFloat(me.longitude);
+      }
+
+      initMap();
       vendorMarker.setLatLng([currentLat, currentLng]);
+      map.setView([currentLat, currentLng], 13);
       document.getElementById("locationName").value = me.location || "";
     }
-  } catch (e) {
-    alert(`❌ Failed to load profile: ${e.message}`);
-  }
-}
 
-// ===== LOCATION HANDLERS =====
-document.getElementById("useCurrentLocationBtn").addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    alert("❌ Geolocation not supported");
-    return;
-  }
+    /* =======================
+       LOCATION BUTTONS
+    ======================= */
+    document.getElementById("useCurrentLocationBtn").addEventListener("click", () => {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        currentLat = pos.coords.latitude;
+        currentLng = pos.coords.longitude;
 
-  const statusEl = document.getElementById("locationStatus");
-  statusEl.textContent = "📍 Getting location...";
-  statusEl.style.color = "inherit";
+        vendorMarker.setLatLng([currentLat, currentLng]);
+        map.setView([currentLat, currentLng], 13);
 
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      currentLat = pos.coords.latitude;
-      currentLng = pos.coords.longitude;
-      vendorMarker.setLatLng([currentLat, currentLng]);
-      map.setView([currentLat, currentLng], 13);
-      document.getElementById("locationName").value = `${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
-      statusEl.textContent = "✅ Location updated! Click Save.";
-      statusEl.style.color = "green";
-    },
-    (err) => {
-      statusEl.textContent = `❌ Error: ${err.message}`;
-      statusEl.style.color = "crimson";
-    }
-  );
-});
+        const place = await getLocationName(currentLat, currentLng);
+        document.getElementById("locationName").value = place;
 
-document.getElementById("saveLocationBtn").addEventListener("click", async () => {
-  try {
-    const locationName = document.getElementById("locationName").value.trim();
-    if (!locationName) throw new Error("Enter a location name");
-
-    const statusEl = document.getElementById("locationStatus");
-    statusEl.textContent = "💾 Saving...";
-    statusEl.style.color = "inherit";
-
-    await apiCall("/api/vendors/me/location", "PATCH", {
-      latitude: currentLat,
-      longitude: currentLng,
-      location_name: locationName,
+        document.getElementById("locationStatus").textContent = "✅ Location detected";
+      });
     });
 
-    statusEl.textContent = "✅ Location saved!";
-    statusEl.style.color = "green";
-    await loadVendorProfile();
-  } catch (e) {
-    document.getElementById("locationStatus").textContent = `❌ ${e.message}`;
-    document.getElementById("locationStatus").style.color = "crimson";
-  }
-});
+    document.getElementById("saveLocationBtn").addEventListener("click", async () => {
+      const locationName = document.getElementById("locationName").value.trim();
+      if (!locationName) return alert("Enter location");
 
-// ===== VENDOR TYPE HANDLERS =====
-document.getElementById("saveTypeBtn").addEventListener("click", async () => {
-  try {
-    const selected = document.querySelector('input[name="vendorType"]:checked');
-    if (!selected) throw new Error("Select a type first");
+      await apiCall("/api/vendors/me/location", "PATCH", {
+        latitude: currentLat,
+        longitude: currentLng,
+        location_name: locationName
+      });
 
-    const typeStatus = document.getElementById("typeStatus");
-    typeStatus.textContent = "💾 Saving...";
-    typeStatus.style.color = "inherit";
-
-    await apiCall("/api/vendors/me/type", "PATCH", { vendor_type: selected.value });
-    localStorage.setItem("vendorType", selected.value);
-
-    typeStatus.textContent = "✅ Saved!";
-    typeStatus.style.color = "green";
-
-    updateFormForType(selected.value);
-    setGateVisibility(selected.value);
-    await loadLookups();
-    await renderListings();
-  } catch (e) {
-    document.getElementById("typeStatus").textContent = `❌ ${e.message}`;
-    document.getElementById("typeStatus").style.color = "crimson";
-  }
-});
-
-document.querySelectorAll('input[name="vendorType"]').forEach((radio) => {
-  radio.addEventListener("change", (e) => {
-    updateFormForType(e.target.value);
-    setGateVisibility(e.target.value);
-    localStorage.setItem("vendorType", e.target.value);
-  });
-});
-
-// ===== UI HELPERS =====
-function updateFormForType(type) {
-  const sellerFields = document.getElementById("sellerFields");
-  const serviceFields = document.getElementById("serviceFields");
-
-  if (type === "seller") {
-    document.getElementById("createHeader").textContent = "Create Product Listing";
-    document.getElementById("myItemsHeader").textContent = "My Products";
-    document.getElementById("filterLabel").textContent = "Filter by category";
-    sellerFields.classList.remove("hidden");
-    serviceFields.classList.add("hidden");
-    document.getElementById("formHint").textContent = "Add products to sell on Nibash.";
-  } else if (type === "service") {
-    document.getElementById("createHeader").textContent = "Create Service Project";
-    document.getElementById("myItemsHeader").textContent = "My Projects";
-    document.getElementById("filterLabel").textContent = "Filter by project type";
-    sellerFields.classList.add("hidden");
-    serviceFields.classList.remove("hidden");
-    document.getElementById("formHint").textContent = "Create service packages for customers.";
-  }
-}
-
-function setGateVisibility(type) {
-  const show = type === "seller" || type === "service";
-  document.getElementById("createListingSection").classList.toggle("hidden", !show);
-  document.getElementById("myListingsSection").classList.toggle("hidden", !show);
-  if (show) {
-    document.getElementById("createListingSection").classList.add("ready");
-    document.getElementById("myListingsSection").classList.add("ready");
-  }
-}
-
-// ===== LOOKUPS & LISTINGS =====
-async function loadLookups() {
-  try {
-    const prodCats = await apiCall("/api/lookups/product-categories");
-    document.getElementById("productCategory").innerHTML = `<option value="">Select a category</option>` +
-      prodCats.map(c => `<option value="${c.slug}">${c.name}</option>`).join("");
-
-    const servCats = await apiCall("/api/lookups/service-categories");
-    document.getElementById("serviceCategory").innerHTML = `<option value="">Select a project type</option>` +
-      servCats.map(c => `<option value="${c.slug}">${c.name}</option>`).join("");
-  } catch (e) {
-    console.error("Lookups error:", e);
-  }
-}
-
-async function renderListings() {
-  try {
-    const type = localStorage.getItem("vendorType") || "";
-    const container = document.getElementById("listingsContainer");
-    const noListings = document.getElementById("noListings");
-    
-    if (!type) {
-      noListings.style.display = "block";
-      noListings.textContent = "Choose vendor type to view items.";
-      return;
-    }
-
-    const url = type === "seller" ? `/api/products?vendor_id=${VENDOR_ID}` : `/api/services?vendor_id=${VENDOR_ID}`;
-    const rows = await apiCall(url);
-    
-    container.innerHTML = "";
-    
-    if (!rows || rows.length === 0) {
-      noListings.style.display = "block";
-      noListings.textContent = type === "seller" ? "No products yet. Create one above." : "No projects yet. Create one above.";
-      return;
-    }
-    
-    noListings.style.display = "none";
-
-    rows.forEach((item) => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      const img = item.image_url || "../images/placeholder.jpg";
-      const cat = item.category_slug || item.service_category_slug || "Item";
-      
-      card.innerHTML = `
-        <img src="${img}" alt="${item.title}" onerror="this.src='../images/placeholder.jpg'">
-        <p><strong>${item.title}</strong><br><span class="muted">${cat.replace(/_/g, " ")}</span></p>
-      `;
-      container.appendChild(card);
-    });
-  } catch (e) {
-    console.error("Listings error:", e);
-  }
-}
-
-// ===== CREATE LISTING =====
-document.getElementById("createListingBtn").addEventListener("click", async () => {
-  try {
-    const type = localStorage.getItem("vendorType");
-    if (!type) throw new Error("Select vendor type first");
-
-    const title = document.getElementById("listingTitle").value.trim();
-    const description = document.getElementById("listingDesc").value.trim();
-    if (!title || !description) throw new Error("Title and description required");
-
-    const createStatus = document.getElementById("createStatus");
-    createStatus.textContent = "💾 Saving...";
-    createStatus.style.color = "inherit";
-
-    let body = { title, description };
-
-    if (type === "seller") {
-      body.category_slug = document.getElementById("productCategory").value;
-      body.price_bdt = parseInt(document.getElementById("productPrice").value);
-      body.stock = parseInt(document.getElementById("productStock").value);
-      body.image_url = document.getElementById("productImage").value.trim() || null;
-      if (!body.category_slug || !body.price_bdt || !body.stock) throw new Error("Fill all product fields");
-      await apiCall("/api/products", "POST", body);
-    } else {
-      body.service_category_slug = document.getElementById("serviceCategory").value;
-      body.rate_bdt = parseInt(document.getElementById("serviceRate").value);
-      body.billing = document.getElementById("serviceBilling").value;
-      body.service_area = document.getElementById("serviceArea").value.trim();
-      body.image_url = document.getElementById("serviceImage").value.trim() || null;
-      if (!body.service_category_slug || !body.rate_bdt || !body.billing || !body.service_area) throw new Error("Fill all service fields");
-      await apiCall("/api/services", "POST", body);
-    }
-
-    createStatus.textContent = "✅ Saved!";
-    createStatus.style.color = "green";
-    document.getElementById("listingTitle").value = "";
-    document.getElementById("listingDesc").value = "";
-    await renderListings();
-  } catch (e) {
-    document.getElementById("createStatus").textContent = `❌ ${e.message}`;
-    document.getElementById("createStatus").style.color = "crimson";
-  }
-});
-
-document.getElementById("clearFormBtn").addEventListener("click", () => {
-  document.getElementById("listingTitle").value = "";
-  document.getElementById("listingDesc").value = "";
-  document.getElementById("productPrice").value = "";
-  document.getElementById("productStock").value = "";
-  document.getElementById("productImage").value = "";
-  document.getElementById("serviceRate").value = "";
-  document.getElementById("serviceArea").value = "";
-  document.getElementById("serviceImage").value = "";
-  document.getElementById("createStatus").textContent = "";
-});
-
-// ===== EDIT DIALOG =====
-document.getElementById("editInfoBtn").addEventListener("click", () => {
-  document.getElementById("editDialog").style.display = "flex";
-});
-
-document.getElementById("closeEditBtn").addEventListener("click", () => {
-  document.getElementById("editDialog").style.display = "none";
-});
-
-document.getElementById("saveEditBtn").addEventListener("click", async () => {
-  try {
-    const data = {
-      company_name: document.getElementById("editCompanyName").value.trim(),
-      phone: document.getElementById("editCompanyPhone").value.trim(),
-      location: document.getElementById("editCompanyLocation").value.trim(),
-      email: document.getElementById("editCompanyEmail").value.trim(),
-      job_type: document.getElementById("editJobType").value.trim(),
-      Vendor_description: document.getElementById("editJobDescription").value.trim(),
-      logo_url: document.getElementById("editLogoUrl").value.trim() || null,
-    };
-
-    if (!data.company_name || !data.phone || !data.location || !data.email || !data.job_type) {
-      throw new Error("All required fields must be filled");
-    }
-
-    const editStatus = document.getElementById("editStatus");
-    editStatus.textContent = "💾 Saving...";
-    editStatus.style.color = "inherit";
-
-    await apiCall("/api/vendors/me", "PATCH", data);
-
-    editStatus.textContent = "✅ Saved!";
-    editStatus.style.color = "green";
-
-    setTimeout(() => {
-      document.getElementById("editDialog").style.display = "none";
+      document.getElementById("locationStatus").textContent = "✅ Location saved";
       loadVendorProfile();
-    }, 600);
-  } catch (e) {
-    document.getElementById("editStatus").textContent = `❌ ${e.message}`;
-    document.getElementById("editStatus").style.color = "crimson";
-  }
-});
+    });
 
-document.getElementById("resetEditBtn").addEventListener("click", () => {
-  if (VENDOR_PROFILE) {
-    document.getElementById("editCompanyName").value = VENDOR_PROFILE.company_name || "";
-    document.getElementById("editCompanyPhone").value = VENDOR_PROFILE.phone || "";
-    document.getElementById("editCompanyLocation").value = VENDOR_PROFILE.location || "";
-    document.getElementById("editCompanyEmail").value = VENDOR_PROFILE.email || "";
-    document.getElementById("editJobType").value = VENDOR_PROFILE.job_type || "";
-    document.getElementById("editJobDescription").value = VENDOR_PROFILE.Vendor_description || "";
-    document.getElementById("editLogoUrl").value = VENDOR_PROFILE.logo_url || "";
-  }
-});
+    /* =======================
+       EDIT VENDOR INFO
+    ======================= */
+    document.getElementById("editInfoBtn").addEventListener("click", () => {
+      document.getElementById("editDialog").style.display = "flex";
+    });
 
-// ===== LOGOUT =====
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("vendorId");
-  localStorage.removeItem("vendorToken");
-  localStorage.removeItem("vendorType");
-  window.location.href = "../index.html";
-});
+    document.getElementById("closeEditBtn").addEventListener("click", () => {
+      document.getElementById("editDialog").style.display = "none";
+    });
 
-// ===== INIT =====
-console.log("🚀 Initializing vendor dashboard...");
-loadVendorProfile();
+    document.getElementById("saveEditBtn").addEventListener("click", async () => {
+      try {
+        const data = {
+          company_name: document.getElementById("editCompanyName").value.trim(),
+          phone: document.getElementById("editCompanyPhone").value.trim(),
+          location: document.getElementById("editCompanyLocation").value.trim(),
+          email: document.getElementById("editCompanyEmail").value.trim(),
+          job_type: document.getElementById("editJobType").value,
+          Vendor_description: document.getElementById("editJobDescription").value.trim(),
+          logo_url: document.getElementById("editLogoUrl").value.trim() || null
+        };
+
+        if (!data.company_name || !data.phone || !data.location || !data.email || !data.job_type) {
+          throw new Error("All required fields must be filled");
+        }
+
+        const status = document.getElementById("editStatus");
+        status.textContent = "💾 Saving...";
+
+        await apiCall("/api/vendors/me", "PATCH", data);
+
+        status.textContent = "✅ Saved";
+        status.style.color = "green";
+
+        setTimeout(() => {
+          document.getElementById("editDialog").style.display = "none";
+          loadVendorProfile();
+        }, 600);
+
+      } catch (e) {
+        document.getElementById("editStatus").textContent = `❌ ${e.message}`;
+        document.getElementById("editStatus").style.color = "crimson";
+      }
+    });
+
+    document.getElementById("resetEditBtn").addEventListener("click", () => {
+      if (!VENDOR_PROFILE) return;
+      document.getElementById("editCompanyName").value = VENDOR_PROFILE.company_name || "";
+      document.getElementById("editCompanyPhone").value = VENDOR_PROFILE.phone || "";
+      document.getElementById("editCompanyLocation").value = VENDOR_PROFILE.location || "";
+      document.getElementById("editCompanyEmail").value = VENDOR_PROFILE.email || "";
+      document.getElementById("editJobType").value = VENDOR_PROFILE.job_type || "";
+      document.getElementById("editJobDescription").value = VENDOR_PROFILE.Vendor_description || "";
+      document.getElementById("editLogoUrl").value = VENDOR_PROFILE.logo_url || "";
+    });
+
+    /* =======================
+       LOGOUT
+    ======================= */
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "../index.html";
+    });
+
+    /* =======================
+       INIT
+    ======================= */
+    loadVendorProfile();
   </script>
+
+
 </body>
+
 </html>
