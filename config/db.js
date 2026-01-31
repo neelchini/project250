@@ -3,29 +3,29 @@ import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config();
 
-/**
- * Use a pooled, promise-based connection so:
- *  - db.query(...) works everywhere
- *  - db.getConnection() is available for transactions
- */
+// Use environment variables for everything
 const db = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "", // you used DB_PASSWORD earlier
-  database: process.env.DB_NAME || "nibashDB",
+  password: process.env.DB_PASSWORD, // use env variable
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
-// Optional connectivity check on boot (non-fatal)
-try {
-  const [row] = await db.query("SELECT 1 AS ok");
-  console.log("✅ Connected to MySQL pool (nibashDB). Ping:", row?.[0]?.ok === 1 ? "ok" : "unknown");
-} catch (e) {
-  console.error("❌ Database pool init failed:", e.message);
+// Async function to check connectivity
+async function testConnection() {
+  try {
+    const [row] = await db.query("SELECT 1 AS ok");
+    console.log("✅ Connected to MySQL pool:", row?.[0]?.ok === 1 ? "ok" : "unknown");
+  } catch (e) {
+    console.error("❌ Database pool init failed:", e.message);
+  }
 }
 
+// Run the test immediately
+testConnection();
+
 export default db;
-// (optional) also export as a named 'pool' if any file uses { pool }
 export { db as pool };

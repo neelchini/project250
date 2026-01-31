@@ -9,9 +9,11 @@
  * FILE: server.js  (UPDATED)
  * ==================================================
  */
-
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
+
+console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? "LOADED" : "MISSING");
 import cors from "cors";
 import db from "./config/db.js";
 import authRouter from "./routes/customerAuth.js";
@@ -24,7 +26,9 @@ import { requireCustomerJWT } from "./middleware/auth.js";
 import requireVendor from "./middleware/requireVendor.js";
 import customersRouter from "./routes/customer.js";
 // At top of server.js
-import { OpenAI } from "openai";
+
+
+import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -36,7 +40,7 @@ const openai = new OpenAI({
 import ratingsRouter from "./routes/ratings.js";              // UPDATED
 import recommendationsRouter from "./routes/recommendations.js"; // UPDATED
 
-dotenv.config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());

@@ -45,7 +45,10 @@ router.get("/me", async (req, res) => {
          service_radius_km,
          visiting_card_url,
          shop_address,
-         service_locations
+         service_locations,
+         verification_status,
+         verification_requested_at,
+         verification_documents
        FROM Vendors
        WHERE vendor_id = ?
        LIMIT 1`,
@@ -155,7 +158,10 @@ router.patch("/me", async (req, res) => {
          service_radius_km,
          visiting_card_url,
          shop_address,
-         service_locations
+         service_locations,
+         verification_status,
+         verification_requested_at,
+         verification_documents
        FROM Vendors
        WHERE vendor_id = ?
        LIMIT 1`,
@@ -210,6 +216,39 @@ router.patch("/me/type", async (req, res) => {
     return res.json({ ok: true, data: { vendor_id, vendor_type } });
   } catch (e) {
     console.error("PATCH /me/type error:", e);
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+/**
+ * POST /api/vendors/me/verify
+ * Submit documents / request vendor verification
+ */
+router.post('/me/verify', async (req, res) => {
+  try {
+    const vendor_id = req.vendor_id;
+    if (!vendor_id) return res.status(401).json({ ok: false, error: 'Unauthorized' });
+
+    const { nid_no, live_photo_url, trade_license_id, training_certificate } = req.body || {};
+    if (!nid_no && !live_photo_url && !trade_license_id && !training_certificate) {
+      return res.status(400).json({ ok: false, error: 'Provide at least one verification item' });
+    }
+
+    const docs = {
+      nid_no: nid_no || null,
+      live_photo_url: live_photo_url || null,
+      trade_license_id: trade_license_id || null,
+      training_certificate: training_certificate || null
+    };
+
+    await db.query(
+      "UPDATE Vendors SET verification_status = 'pending', verification_requested_at = NOW(), verification_documents = ? WHERE vendor_id = ?",
+      [JSON.stringify(docs), vendor_id]
+    );
+
+    return res.json({ ok: true, message: 'your profile has been submitted for verification' });
+  } catch (e) {
+    console.error('/me/verify error', e);
     return res.status(500).json({ ok: false, error: e.message });
   }
 });
@@ -299,7 +338,10 @@ router.patch("/me/location", async (req, res) => {
          service_radius_km,
          visiting_card_url,
          shop_address,
-         service_locations
+         service_locations,
+         verification_status,
+         verification_requested_at,
+         verification_documents
        FROM Vendors
        WHERE vendor_id = ?
        LIMIT 1`,
